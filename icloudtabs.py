@@ -48,13 +48,11 @@ for uid in info['values'].values():
 
 # Get local machine's host and computer names to exclude both from the list
 
-hostname_proc = subprocess.Popen(
-    ['scutil --get LocalHostName'], stdout=subprocess.PIPE, shell=True)
+hostname_proc = subprocess.Popen(['scutil --get LocalHostName'], stdout=subprocess.PIPE, shell=True)
 (hostname_out, hostname_err) = hostname_proc.communicate()
 hostname = hostname_out.strip()
 
-computername_proc = subprocess.Popen(
-    ['scutil --get ComputerName'], stdout=subprocess.PIPE, shell=True)
+computername_proc = subprocess.Popen(['scutil --get ComputerName'], stdout=subprocess.PIPE, shell=True)
 (computername_out, computername_err) = computername_proc.communicate()
 computername = computername_out.strip()
 
@@ -66,25 +64,23 @@ for device in devicetabs:
 
     device_name = device[0]
 
-    if device_name not in [hostname, computername.decode("utf-8")]:
+    for tab in device[1]:
 
-        for tab in device[1]:
+        item = ET.SubElement(root, 'item')
+        item.set('uid', tab['URL'])
+        item.set('arg', tab['URL']+" "+tab['Title'])
 
-            if '{query}' not in tab['Title'].lower():
-                continue
+        title = ET.SubElement(item, 'title')
+        title.text = tab['Title']
 
-            item = ET.SubElement(root, 'item')
-            item.set('uid', tab['URL'])
-            item.set('arg', tab['URL'])
+        subtitle = ET.SubElement(item, 'subtitle')
+        if device_name not in [hostname, computername.decode("utf-8")]:
+          subtitle.text = device_name
+        else:
+          subtitle.text = device_name
 
-            title = ET.SubElement(item, 'title')
-            title.text = tab['Title']
-
-            subtitle = ET.SubElement(item, 'subtitle')
-            subtitle.text = 'iCloud Device: '+device_name
-
-            icon = ET.SubElement(item, 'icon')
-            icon.set('type', 'fileicon')
-            icon.text = '/Applications/Safari.app'
+        icon = ET.SubElement(item, 'icon')
+        icon.set('type', 'fileicon')
+        icon.text = '/Applications/Safari.app'
 
 print ET.tostring(root)
