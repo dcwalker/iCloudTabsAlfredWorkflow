@@ -75,9 +75,9 @@ for device in devicetabs:
 
         subtitle = ET.SubElement(item, 'subtitle')
         if device_name not in [hostname, computername.decode("utf-8")]:
-          subtitle.text = device_name
+          subtitle.text = "(" + device_name + ") " + tab['URL']
         else:
-          subtitle.text = device_name
+          subtitle.text = tab['URL']
 
         icon = ET.SubElement(item, 'icon')
         icon.set('type', 'fileicon')
