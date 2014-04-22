@@ -66,21 +66,23 @@ for device in devicetabs:
 
     for tab in device[1]:
 
-        item = ET.SubElement(root, 'item')
-        item.set('uid', tab['URL'])
-        item.set('arg', tab['URL']+" "+tab['Title'])
+        if ('{query}' == "") or any(s in ((tab['Title'] + device_name + tab['URL']).encode('ascii', 'ignore').lower()) for s in '{query}'.lower().split()):
 
-        title = ET.SubElement(item, 'title')
-        title.text = tab['Title']
+            item = ET.SubElement(root, 'item')
+            item.set('uid', tab['URL'])
+            item.set('arg', tab['URL']+" "+tab['Title'])
 
-        subtitle = ET.SubElement(item, 'subtitle')
-        if device_name not in [hostname, computername.decode("utf-8")]:
-          subtitle.text = "(" + device_name + ") " + tab['URL']
-        else:
-          subtitle.text = tab['URL']
+            title = ET.SubElement(item, 'title')
+            title.text = tab['Title']
 
-        icon = ET.SubElement(item, 'icon')
-        icon.set('type', 'fileicon')
-        icon.text = '/Applications/Safari.app'
+            subtitle = ET.SubElement(item, 'subtitle')
+            if device_name not in [hostname, computername.decode("utf-8")]:
+              subtitle.text = "(" + device_name + ") " + tab['URL']
+            else:
+              subtitle.text = tab['URL']
+
+            icon = ET.SubElement(item, 'icon')
+            icon.set('type', 'fileicon')
+            icon.text = '/Applications/Safari.app'
 
 print ET.tostring(root)
